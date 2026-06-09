@@ -12,7 +12,6 @@ CPP_SOURCES += Effect-Modules/base_effect_module.cpp
 # Naming the module sources explicitly to make it easier to add/remove from build. Otherwise all global attributes
 #  will be included in the build and take up memory resources, even when the .h file is commented out. 
 
-CPP_SOURCES += Effect-Modules/amp_module.cpp
 CPP_SOURCES += Effect-Modules/autopan_module.cpp
 CPP_SOURCES += Effect-Modules/Chopper/chopper.cpp
 CPP_SOURCES += Effect-Modules/chopper_module.cpp
@@ -33,7 +32,7 @@ CPP_SOURCES += Effect-Modules/looper_module.cpp
 CPP_SOURCES += Effect-Modules/metro_module.cpp
 CPP_SOURCES += Effect-Modules/modulated_tremolo_module.cpp
 CPP_SOURCES += Effect-Modules/multi_delay_module.cpp
-CPP_SOURCES += Effect-Modules/nam_module.cpp
+CPP_SOURCES += Effect-Modules/nam_a2_module.cpp
 CPP_SOURCES += Effect-Modules/noise_gate_module.cpp
 CPP_SOURCES += Effect-Modules/overdrive_module.cpp
 CPP_SOURCES += Effect-Modules/peq_module.cpp
@@ -62,6 +61,14 @@ OPT=-Ofast
 # Boot options
 APP_TYPE = BOOT_SRAM
 
+# Place the large NAM A2 history buffer in AXI-SRAM instead of DTCMRAM.
+# nam_a2_sections.lds is an INSERT fragment that augments libDaisy's main linker
+# script (selected below via APP_TYPE). The ld manual requires the INSERT script
+# to appear FIRST on the command line, and libDaisy's core Makefile does
+# `LDFLAGS += ... -T$(LDSCRIPT)`, so adding ours here (before the include) places
+# it ahead of the main script. See nam_a2_sections.lds and nam_a2_runtime.h.
+LDFLAGS += -T$(abspath nam_a2_sections.lds)
+
 # Library Locations
 DAISYSP_DIR ?= dependencies/DaisySP
 LIBDAISY_DIR ?= dependencies/libDaisy
@@ -77,10 +84,8 @@ include $(SYSTEM_FILES_DIR)/Makefile
 C_INCLUDES += -isystem ./dependencies/q/q/q_lib/include
 C_INCLUDES += -isystem ./dependencies/q/infra/include
 C_INCLUDES += -isystem ./dependencies/gcem/include
+# Eigen is used by Effect-Modules/ImpulseResponse (the IR module).
 C_INCLUDES += -isystem ./dependencies/eigen
-C_INCLUDES += -isystem ./dependencies/RTNeural
-
-CPPFLAGS += -DRTNEURAL_DEFAULT_ALIGNMENT=8 -DRTNEURAL_NO_DEBUG=1 -DRTNEURAL_USE_EIGEN=1
 
 C_INCLUDES += -isystem ./dependencies/CloudSeed
 LIBS += -lcloudseed
