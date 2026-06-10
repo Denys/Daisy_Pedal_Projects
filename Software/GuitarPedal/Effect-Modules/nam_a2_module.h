@@ -2,13 +2,16 @@
 #ifndef NAM_A2_MODULE_H
 #define NAM_A2_MODULE_H
 
+#include "ImpulseResponse/ImpulseResponse.h"
 #include "base_effect_module.h"
 #include <stdint.h>
 
 // Forward declaration only — the full runtime header (with NAM_A2_NOINLINE functions)
 // is included exclusively in nam_a2_module.cpp to avoid ODR violations when
 // nam_a2_runtime.h is pulled into multiple translation units.
-namespace nam_a2_daisy { class A2Player; }
+namespace nam_a2_daisy {
+class A2Player;
+}
 
 #ifdef __cplusplus
 
@@ -18,18 +21,10 @@ namespace bkshepherd {
 
 class NamA2Module : public BaseEffectModule {
   public:
-    enum Param {
-        GAIN = 0,
-        LEVEL,
-        MODEL,
-        BASS,
-        MID,
-        TREBLE,
-        EQ,
-        PARAM_COUNT
-    };
+    enum Param { GAIN = 0, LEVEL, MODEL, BASS, MID, TREBLE, EQ, IR_CAB, PARAM_COUNT };
 
     void SelectModel();
+    void SelectIR();
 
     NamA2Module();
     ~NamA2Module();
@@ -50,6 +45,7 @@ class NamA2Module : public BaseEffectModule {
 
     float m_inputBuffer[kBlockSize];
     float m_outputBuffer[kBlockSize];
+    float m_irOutputBuffer[kBlockSize];
     int m_bufferIndex;
 
     float m_gainMin;
@@ -62,11 +58,19 @@ class NamA2Module : public BaseEffectModule {
     float m_gain;
     float m_level;
     bool m_eqEnabled;
+    // Written on the main loop in SelectIR(), read in the audio callback
+    // (ProcessMono). volatile so the callback observes the disable while
+    // setImpulseResponse() rewrites the FIR coefficients and state.
+    volatile bool m_irEnabled;
 
     float m_cachedEffectMagnitudeValue;
 
     int m_currentModelIndex;
     float m_currentModelGain;
+    int m_currentIRindex;
+
+    ImpulseResponse mIR;
+
     // Written on the main loop in SelectModel(), read in the audio callback
     // (ProcessMono). volatile so the callback observes the mute before/while
     // load_weights() + prewarm() rewrite the shared weights and state.
@@ -75,7 +79,7 @@ class NamA2Module : public BaseEffectModule {
     // Pointer to the static A2Player instance owned by nam_a2_module.cpp.
     // Keeping the full type out of this header avoids ODR violations from the
     // NAM_A2_NOINLINE functions in nam_a2_runtime.h.
-    nam_a2_daisy::A2Player* m_model;
+    nam_a2_daisy::A2Player *m_model;
 };
 
 } // namespace bkshepherd
