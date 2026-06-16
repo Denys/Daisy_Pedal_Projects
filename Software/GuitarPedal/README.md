@@ -65,6 +65,7 @@ In guitar_pedal.cpp:
 // #define VARIANT_1590B
 // #define VARIANT_1590B_SMD
 // #define VARIANT_TERRARIUM
+// #define VARIANT_FUNBOX
 ```
 
 If you want to target the GuitarPedal125B hardware change the lines to:
@@ -74,6 +75,7 @@ If you want to target the GuitarPedal125B hardware change the lines to:
 // #define VARIANT_1590B
 // #define VARIANT_1590B_SMD
 // #define VARIANT_TERRARIUM
+// #define VARIANT_FUNBOX
 ```
 
 If you want to target the GuitarPedal1590B hardware change the lines to:
@@ -83,6 +85,7 @@ If you want to target the GuitarPedal1590B hardware change the lines to:
 #define VARIANT_1590B
 // #define VARIANT_1590B_SMD
 // #define VARIANT_TERRARIUM
+// #define VARIANT_FUNBOX
 ```
 
 If you want to target the GuitarPedal1590B-SMD hardware change the lines to:
@@ -92,6 +95,7 @@ If you want to target the GuitarPedal1590B-SMD hardware change the lines to:
 // #define VARIANT_1590B
 #define VARIANT_1590B_SMD
 // #define VARIANT_TERRARIUM
+// #define VARIANT_FUNBOX
 ```
 
 If you want to target the Pedal PCB hardware change the lines to:
@@ -101,6 +105,7 @@ If you want to target the Pedal PCB hardware change the lines to:
 // #define VARIANT_1590B
 // #define VARIANT_1590B_SMD
 #define VARIANT_TERRARIUM
+// #define VARIANT_FUNBOX
 ```
 
 ### 4. Build and Deploy the Code
