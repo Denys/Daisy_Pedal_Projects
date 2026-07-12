@@ -178,6 +178,11 @@ void GuitarPedalUI::InitEffectUiPages() {
 
     // Clean up any dynamically allocated memory
     if (m_activeEffectSettingFloatValues != nullptr) {
+        for (int i = 0; i < m_numActiveEffectSettingsItems; ++i) {
+            if (m_activeEffectSettingFloatValues[i] != nullptr) {
+                delete m_activeEffectSettingFloatValues[i];
+            }
+        }
         delete[] m_activeEffectSettingFloatValues;
         m_activeEffectSettingFloatValues = nullptr;
     }
@@ -197,10 +202,12 @@ void GuitarPedalUI::InitEffectUiPages() {
 
     if (m_activeEffectSettingBoolValues != nullptr) {
         delete[] m_activeEffectSettingBoolValues;
+        m_activeEffectSettingBoolValues = nullptr;
     }
 
     if (m_activeEffectSettingsMenuItems != nullptr) {
         delete[] m_activeEffectSettingsMenuItems;
+        m_activeEffectSettingsMenuItems = nullptr;
     }
 
     m_numActiveEffectSettingsItems = activeEffect->GetParameterCount();
@@ -323,8 +330,13 @@ void GuitarPedalUI::InitGlobalSettingsUIPages() {
     m_midiChannelSettingValue.Set(settings.globalMidiChannel);
     m_globalSettingsMenuItems[5].asMappedValueItem.valueToModify = &m_midiChannelSettingValue;
 
-    m_globalSettingsMenuItems[6].type = AbstractMenu::ItemType::closeMenuItem;
-    m_globalSettingsMenuItems[6].text = "Back";
+    m_globalSettingsMenuItems[6].type = AbstractMenu::ItemType::callbackFunctionItem;
+    m_globalSettingsMenuItems[6].text = "Reboot";
+    m_globalSettingsMenuItems[6].asCallbackFunctionItem.callbackFunction = &RebootToBootloader;
+    m_globalSettingsMenuItems[6].asCallbackFunctionItem.context = this;
+
+    m_globalSettingsMenuItems[7].type = AbstractMenu::ItemType::closeMenuItem;
+    m_globalSettingsMenuItems[7].text = "Back";
 
     m_globalSettingsMenu.Init(m_globalSettingsMenuItems, kNumGlobalSettingsMenuItems);
 

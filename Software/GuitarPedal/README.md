@@ -25,8 +25,6 @@ Check to make sure that the following directories have files in them:
 1. `Software/GuitarPedal/dependencies/q/q`
 1. `Software/GuitarPedal/dependencies/q/infra`
 1. `Software/GuitarPedal/dependencies/gcem`
-1. `Software/GuitarPedal/dependencies/RTNeural`
-1. `Software/GuitarPedal/dependencies/eigen`
 
 If they do not have anything in them, you may need to do a `git submodule update --init --recursive`.
 
@@ -67,6 +65,7 @@ In guitar_pedal.cpp:
 // #define VARIANT_1590B
 // #define VARIANT_1590B_SMD
 // #define VARIANT_TERRARIUM
+// #define VARIANT_FUNBOX
 ```
 
 If you want to target the GuitarPedal125B hardware change the lines to:
@@ -76,6 +75,7 @@ If you want to target the GuitarPedal125B hardware change the lines to:
 // #define VARIANT_1590B
 // #define VARIANT_1590B_SMD
 // #define VARIANT_TERRARIUM
+// #define VARIANT_FUNBOX
 ```
 
 If you want to target the GuitarPedal1590B hardware change the lines to:
@@ -85,6 +85,7 @@ If you want to target the GuitarPedal1590B hardware change the lines to:
 #define VARIANT_1590B
 // #define VARIANT_1590B_SMD
 // #define VARIANT_TERRARIUM
+// #define VARIANT_FUNBOX
 ```
 
 If you want to target the GuitarPedal1590B-SMD hardware change the lines to:
@@ -94,6 +95,7 @@ If you want to target the GuitarPedal1590B-SMD hardware change the lines to:
 // #define VARIANT_1590B
 #define VARIANT_1590B_SMD
 // #define VARIANT_TERRARIUM
+// #define VARIANT_FUNBOX
 ```
 
 If you want to target the Pedal PCB hardware change the lines to:
@@ -103,6 +105,7 @@ If you want to target the Pedal PCB hardware change the lines to:
 // #define VARIANT_1590B
 // #define VARIANT_1590B_SMD
 #define VARIANT_TERRARIUM
+// #define VARIANT_FUNBOX
 ```
 
 ### 4. Build and Deploy the Code

@@ -3,7 +3,7 @@
 #define GUITAR_PEDAL_STORAGE_H
 
 // Persistent Storage Settings
-#define SETTINGS_FILE_FORMAT_VERSION 9
+#define SETTINGS_FILE_FORMAT_VERSION 10
 
 // Arbitrarily limiting this to 4KB of stored presets since this sits in DTCMRAM which is limited to 128KB.
 // TODO: In the future it would be better if this worked with the QSPI directly instead of using
@@ -56,5 +56,6 @@ void SaveEffectSettingsToPersitantStorageForEffectID(int effectID, uint32_t pres
 void SetSettingsParameterValueForEffect(int effectID, int paramID, uint32_t paramValue, uint32_t startIdx);
 void LoadPresetFromPersistentStorage(uint32_t effectID, uint32_t presetID);
 void FactoryReset(void *context);
+void RebootToBootloader(void *context);
 
 #endif

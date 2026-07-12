@@ -3,16 +3,29 @@ TARGET =  guitarpedal
 
 CPP_STANDARD = -std=gnu++20
 
+# Library Locations
+DAISYSP_DIR ?= dependencies/DaisySP
+LIBDAISY_DIR ?= dependencies/libDaisy
+USE_DAISYSP_LGPL=1
+
 # Sources
+CMSIS_DSP_DIR = ${LIBDAISY_DIR}/Drivers/CMSIS-DSP
+
+CMSIS_DSP_SRC = \
+$(CMSIS_DSP_DIR)/Source/FilteringFunctions/arm_fir_f32.c \
+$(CMSIS_DSP_DIR)/Source/FilteringFunctions/arm_fir_init_f32.c \
+$(CMSIS_DSP_DIR)/Source/SupportFunctions/arm_fill_f32.c \
+$(CMSIS_DSP_DIR)/Source/BasicMathFunctions/arm_scale_f32.c
+C_DEFS += -DARM_MATH_LOOPUNROLL
 
 CPP_SOURCES = guitar_pedal.cpp guitar_pedal_storage.cpp $(wildcard UI/*.cpp) $(wildcard Util/*.cpp) \
 $(wildcard Hardware-Modules/*.cpp)
 CPP_SOURCES += Effect-Modules/base_effect_module.cpp
+C_SOURCES += $(CMSIS_DSP_SRC)
 
 # Naming the module sources explicitly to make it easier to add/remove from build. Otherwise all global attributes
 #  will be included in the build and take up memory resources, even when the .h file is commented out. 
 
-CPP_SOURCES += Effect-Modules/amp_module.cpp
 CPP_SOURCES += Effect-Modules/autopan_module.cpp
 CPP_SOURCES += Effect-Modules/Chopper/chopper.cpp
 CPP_SOURCES += Effect-Modules/chopper_module.cpp
@@ -27,13 +40,13 @@ CPP_SOURCES += Effect-Modules/geq_module.cpp
 CPP_SOURCES += Effect-Modules/granulardelay_module.cpp
 CPP_SOURCES += Effect-Modules/distortion_module.cpp
 CPP_SOURCES += Effect-Modules/ImpulseResponse/ImpulseResponse.cpp
-CPP_SOURCES += Effect-Modules/ImpulseResponse/dsp.cpp
+CPP_SOURCES += Effect-Modules/ImpulseResponse/ir_data.cpp
 CPP_SOURCES += Effect-Modules/ir_module.cpp
 CPP_SOURCES += Effect-Modules/looper_module.cpp
 CPP_SOURCES += Effect-Modules/metro_module.cpp
 CPP_SOURCES += Effect-Modules/modulated_tremolo_module.cpp
 CPP_SOURCES += Effect-Modules/multi_delay_module.cpp
-CPP_SOURCES += Effect-Modules/nam_module.cpp
+CPP_SOURCES += Effect-Modules/nam_a2_module.cpp
 CPP_SOURCES += Effect-Modules/noise_gate_module.cpp
 CPP_SOURCES += Effect-Modules/overdrive_module.cpp
 CPP_SOURCES += Effect-Modules/peq_module.cpp
@@ -44,6 +57,7 @@ CPP_SOURCES += Effect-Modules/reverb_module.cpp
 CPP_SOURCES += Effect-Modules/scifi_module.cpp
 CPP_SOURCES += Effect-Modules/scope_module.cpp
 CPP_SOURCES += Effect-Modules/spectral_delay_module.cpp
+CPP_SOURCES += Effect-Modules/tape_delay_module.cpp
 CPP_SOURCES += Effect-Modules/tuner_module.cpp
 #CPP_SOURCES += Effect-Modules/reverb_delay_module.cpp
 
@@ -61,11 +75,14 @@ OPT=-Ofast
 # Boot options
 APP_TYPE = BOOT_SRAM
 
-# Library Locations
-DAISYSP_DIR ?= dependencies/DaisySP
-LIBDAISY_DIR ?= dependencies/libDaisy
+# Place the large NAM A2 history buffer in AXI-SRAM instead of DTCMRAM.
+# nam_a2_sections.lds is an INSERT fragment that augments libDaisy's main linker
+# script (selected below via APP_TYPE). The ld manual requires the INSERT script
+# to appear FIRST on the command line, and libDaisy's core Makefile does
+# `LDFLAGS += ... -T$(LDSCRIPT)`, so adding ours here (before the include) places
+# it ahead of the main script. See nam_a2_sections.lds and nam_a2_runtime.h.
+LDFLAGS += -T$(abspath nam_a2_sections.lds)
 
-USE_DAISYSP_LGPL=1
 
 # Core location, and generic Makefile.
 SYSTEM_FILES_DIR = $(LIBDAISY_DIR)/core
@@ -76,14 +93,13 @@ include $(SYSTEM_FILES_DIR)/Makefile
 C_INCLUDES += -isystem ./dependencies/q/q/q_lib/include
 C_INCLUDES += -isystem ./dependencies/q/infra/include
 C_INCLUDES += -isystem ./dependencies/gcem/include
-C_INCLUDES += -isystem ./dependencies/eigen
-C_INCLUDES += -isystem ./dependencies/RTNeural
-
-CPPFLAGS += -DRTNEURAL_DEFAULT_ALIGNMENT=8 -DRTNEURAL_NO_DEBUG=1 -DRTNEURAL_USE_EIGEN=1
 
 C_INCLUDES += -isystem ./dependencies/CloudSeed
 LIBS += -lcloudseed
 LIBDIR += -Ldependencies/CloudSeed/build
+
+# Add CMSIS-DSP include path
+C_INCLUDES += -I$(CMSIS_DSP_DIR)/Include
 
 # Parse variants from argument to make, if none is supplied, will build for 125B
 # options:
@@ -91,6 +107,7 @@ LIBDIR += -Ldependencies/CloudSeed/build
 # make -j8 VARIANT=1590B
 # make -j8 VARIANT=1590B_SMD
 # make -j8 VARIANT=TERRARIUM
+# make -j8 VARIANT=FUNBOX
 ifdef VARIANT
    CFLAGS += -DVARIANT_$(VARIANT)
    $(info VARIANT=$(VARIANT))
