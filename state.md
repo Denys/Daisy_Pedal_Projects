@@ -94,3 +94,25 @@ No design decision is newly frozen by creation of this scaffold. The next substa
 - **Change:** created root `state.md` and defined the completion gate for future runs.
 - **Acceptance:** PASS.
 - **Next single action:** each new lane chat reads this file first and creates or updates its nearest lane-specific `state.md` after its first substantive work package.
+
+### 2026-07-28 — automation continuity governance
+
+- **Run ID:** `pedal-harness-automation-governance-20260728`.
+- **Primary lane:** shared-platform.
+- **Objective:** make repository state, durable decisions, language boundaries, lane isolation, and context rollover mandatory for the `Pedal & Synth Harness Design` automation.
+- **Repository/workspace:** `Denys/Daisy_Pedal_Projects`, branch `main`.
+- **Base state snapshot:** root `state.md` blob `c691fadce7588b4181d810fa0f2cdf264adaf762`.
+- **State before:** root `state.md` contained the continuity scaffold; root `AGENTS.md` and `decision_log.md` were absent; automation `6a60de0031a88191aba946213d984ba0` did not require canonical state/decision reads, append-preserving persistence, lane isolation, or re-fresh rollover.
+- **Accepted decisions:** ADR-0001 through ADR-0004 are active: separate state from decision rationale; keep Delay, Multi-FX, and Synth Harness distinct; use English for internal artifacts and Italian for visible conversation; invoke re-fresh on observable context degradation.
+- **Rejected:** chat history as the primary continuity store; same-context critique labelled independent; date-only handoff names; static old-report lists as current authority; lane-local state as a substitute for root state.
+- **Deferred:** behavioral validation on a future scheduled engineering run; each ADR remains `NOT_RUN` for its named behavioral test.
+- **Artifacts created or modified:** root `AGENTS.md` (commit `2178c1f8b0d940d900157b1cfeff1d3363b7d397`); root `decision_log.md` (commit `cf62d2fec08b43c9b5bcb881dbc8410e5d81fd78`); existing automation `6a60de0031a88191aba946213d984ba0` updated in place.
+- **Evidence inspected:** current automation record and schedule; repository metadata and permissions; repository `README.md`; root `state.md`; absence of prior root `AGENTS.md` and `decision_log.md`; current Delay/Multi-FX operating sources supplied in the Project; UPE v5.6, Fable Instruction Critique, GitHub, and re-fresh contracts.
+- **Tests and verification:** deterministic contract branches PASS for material run, no-material-change, missing continuity, partial persistence failure, supersession, two same-day rollovers, no-new-chat fallback, Italian failure language, and ADR validation status. Independent Reviewer 1 found six issues; F2–F6 were repaired. Fresh Reviewer 2 reviewed package `0a659be1e52fc82d0711b66999be37ea5163379d271c0fddbce80c88a3b62e7d`, closed F2–F6, reported no new blocker, scored 48/50, and recommended ACCEPT. Technical security isolation was not proven and was not claimed. GitHub create/re-fetch verification PASS for both new root files. Automation update/re-fetch verification PASS.
+- **Automation schedule after update:** enabled; daily; `DTSTART;TZID=Europe/Zurich:20260723T100000`; timezone `Europe/Zurich`; timing mode unchanged (`flexible_schedule`).
+- **Assumptions:** none used to claim implementation, build, measurement, hardware validation, or new-chat creation.
+- **Risks/open questions:** first real scheduled-run behavioral evidence is still pending; future Project-source availability can vary and must be dynamically inventoried.
+- **Blocking issues:** none for governance deployment.
+- **Next single action:** on the next scheduled run, read root `AGENTS.md`, root `state.md`, root `decision_log.md`, and the active lane state before selecting exactly one highest-value engineering increment.
+- **Impact:** HW — none; FW/DSP — none; Mechanical — none; Documentation/automation — root governance, ADR persistence, verified in-place automation update, and bounded re-fresh rollover added.
+- **Acceptance status:** PASS.
