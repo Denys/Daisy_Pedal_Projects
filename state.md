@@ -1,7 +1,7 @@
 # Project state — Delay, Multi-FX, and Synth Harness
 
-Last updated: 2026-07-28
-Status: continuity scaffold; detailed lane state must be populated and maintained by the next substantive runs.
+Last updated: 2026-07-29
+Status: active continuity index; Synth Harness lane state is materialized and must be maintained.
 
 ## Purpose
 
@@ -70,7 +70,7 @@ run:
 | Shared platform | Repository files plus latest united engineering report and active instructions | `state.md` until a more-specific file exists | Common interfaces, reusable DSP/HAL/UI/test assets, platform decisions |
 | Delay pedal | Latest delay architecture report, delay handoff context, delay AGENTS instructions | create `work_products/delay/state.md` or equivalent when that lane is materialized | Delay-centric; compact validation path plus full-featured pedal |
 | Multi-FX pedal | Latest multi-FX report and multi-FX AGENTS instructions | create `work_products/multi_fx/state.md` or equivalent when that lane is materialized | Separate companion product; fixed-slot graph, not arbitrary everything-pedal |
-| Synth Harness | Active project instructions and latest harness suitability work | create `work_products/synth_harness/state.md` or equivalent when that lane is materialized | Users, developers, repairers, small manufacturers; broader than production test |
+| Synth Harness | ADR-0005, current repository evidence, and accepted descriptor contract | `work_products/synth_harness/state.md` | Users, developers, repairers, small manufacturers; broader than production test |
 | Verification/productization | Test plans, evidence logs, BOM/cost/manufacturing artifacts | create lane-local state when artifacts exist | Hardware tests, firmware profiling, fixtures, service, DFM, commercialization |
 
 ## Current cross-lane invariants
@@ -84,7 +84,7 @@ run:
 
 ## Decision log summary
 
-No design decision is newly frozen by creation of this scaffold. The next substantive lane run must populate the current decisions from the latest authoritative artifacts rather than relying on this initial summary.
+ADR-0001 through ADR-0005 are active and have no superseding records. ADR-0005 accepts the Synth Harness `DeviceCapabilityDescriptor` v0.1 as a documentation contract only; implementation and hardware validation remain `NOT_RUN`.
 
 ## Run history
 
@@ -116,3 +116,26 @@ No design decision is newly frozen by creation of this scaffold. The next substa
 - **Next single action:** on the next scheduled run, read root `AGENTS.md`, root `state.md`, root `decision_log.md`, and the active lane state before selecting exactly one highest-value engineering increment.
 - **Impact:** HW — none; FW/DSP — none; Mechanical — none; Documentation/automation — root governance, ADR persistence, verified in-place automation update, and bounded re-fresh rollover added.
 - **Acceptance status:** PASS.
+
+### 2026-07-29 — Synth Harness DeviceCapabilityDescriptor contract
+
+- **Run ID:** `pedal-synth-harness-20260729-01`.
+- **Primary lane:** `synth-harness`.
+- **Objective:** define the highest-value unblocked reusable boundary for firmware identity and capabilities across diagnostics, editors, preset tooling, fixtures, service, and future update workflows.
+- **Repository/workspace:** `Denys/Daisy_Pedal_Projects`, branch `main`.
+- **Base SHA/snapshot:** repository HEAD `87caaed73086a7767442aeb572b91fa97f96e5a8`; root-state source blob `df885bc847c18ce16deaa785ba5f8f8a11f95ffe`.
+- **State before:** continuity governance was active, but Synth Harness had no lane-local state, no active technical ADR, and no source-backed device capability contract. The exact change since the previous run was limited to governance files; no technical work product had been persisted.
+- **Active decisions:** ADR-0001 through ADR-0005; no `Supersedes` chain exists. ADR-0005 is newly accepted as a documentation contract.
+- **Accepted decision:** use a versioned, immutable-after-publication, evidence-scoped `DeviceCapabilityDescriptor` with separate compiled-for/observed identity, explicit unknown states, preset-layout identity, a bounded 238-byte canonical binary profile, and fail-closed authorization.
+- **Rejected alternatives:** boolean-only capability flags; silent external fallback to 125B; build target as physical identity; JSON as normative control transport; pin maps or mutable state in the descriptor; preset mutation without exact compatibility; physical-operation authority from compiled-only evidence.
+- **Deferred:** firmware/parser implementation, independent binary golden vector, current layout-hash execution, transport, authentication, firmware update/recovery, calibration, observed carrier identity, and hardware qualification.
+- **Artifacts created/modified:** `work_products/automation_runs/pedal_synth_harness_2026-07-29_device_capability_descriptor.md` (commit `431f50efa79f4d6878a3f52f6989a49ec90b114f`); root `decision_log.md` ADR-0005 (commit `5b8e9fb572c1e3fe8e4da836ff1771aed59eb9a5`); `work_products/synth_harness/state.md` (commit `9b8aee3c890371a47ff3e816aa48baca602fe192`).
+- **Evidence inspected:** root continuity files; README and MIT license; GuitarPedal README, target selector, Makefile, storage format/layout hash, base effect and hardware abstractions, all five carrier implementations, audio callback, and bootloader UI path. Exact blob SHAs are pinned in the artifact.
+- **Project-source inventory:** `SOURCE_UNAVAILABLE` — no current Project-source inventory/read route was exposed. Historical chat filenames were not promoted; current repository primary evidence was sufficient.
+- **Tests/measurements:** continuity gate `PASS`; source matrix `PASS`; terminal independent documentation review `PASS` after two earlier `ACCEPT_WITH_REQUIRED_CHANGES` rounds; terminal result 0 critical, 0 major, 3 minor, confidence 0.94. Firmware build `NOT_RUN`; parser/serialization `NOT_RUN`; layout hash `NOT_RUN`; transport `NOT_RUN`; hardware measurements `NOT_RUN`.
+- **Assumptions:** none used to claim physical carrier, connector, revision, codec, transport, recovery, calibration, performance, build, or test status.
+- **Risks/open questions:** drift between descriptors and initialization; compile target cannot prove installed hardware; exact layout hash absent; v0.1 cannot authorize physical operations; transport/security/update/recovery remain unsolved.
+- **Blockers:** none for the documentation decision. Implementation acceptance is blocked until all six build configurations, parser/policy negatives, layout-hash checks, and independent 238-byte golden vector pass.
+- **Next single action:** implement shared per-target constants, the immutable descriptor, and host tests for five explicit targets plus the no-macro 125B default; keep transport exposure disabled.
+- **Impact:** HW — none; FW/DSP — future read-only descriptor/tests, no audio-path change; Mechanical — none; UI/service — future capability gating and accurate labelling; BOM/cost — no change, implementation estimate 1–2 days and unverified; Documentation — accepted contract, ADR, lane state, and root continuity update.
+- **Acceptance status:** `PASS_WITH_GAPS` — documentation contract accepted; implementation and physical validation remain `NOT_RUN`.
