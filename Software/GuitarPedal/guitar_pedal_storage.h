@@ -51,6 +51,7 @@ struct Settings {
 };
 
 void InitPersistantStorage();
+uint32_t GetCurrentEffectsLayoutHash();
 void LoadEffectSettingsFromPersistantStorage();
 void SaveEffectSettingsToPersitantStorageForEffectID(int effectID, uint32_t presetID);
 void SetSettingsParameterValueForEffect(int effectID, int paramID, uint32_t paramValue, uint32_t startIdx);

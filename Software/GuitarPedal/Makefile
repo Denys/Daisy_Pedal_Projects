@@ -20,6 +20,8 @@ C_DEFS += -DARM_MATH_LOOPUNROLL
 
 CPP_SOURCES = guitar_pedal.cpp guitar_pedal_storage.cpp $(wildcard UI/*.cpp) $(wildcard Util/*.cpp) \
 $(wildcard Hardware-Modules/*.cpp)
+CPP_SOURCES += Synth-Harness/device_capability_descriptor.cpp
+CPP_SOURCES += Synth-Harness/control_inventory.cpp
 CPP_SOURCES += Effect-Modules/base_effect_module.cpp
 C_SOURCES += $(CMSIS_DSP_SRC)
 

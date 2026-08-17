@@ -1,6 +1,7 @@
 #include "daisysp.h"
 #include "guitar_pedal_storage.h"
 #include "loaded_effects.h"
+#include "Synth-Harness/source_device_capability_adapter.hpp"
 #include <string.h>
 
 #include "UI/guitar_pedal_ui.h"
@@ -54,6 +55,7 @@ int activeEffectID = 0;
 int prevActiveEffectID = 0;
 int tunerModuleIndex = -1;
 BaseEffectModule *activeEffect = nullptr;
+synth_harness::Descriptor deviceCapabilityDescriptor{};
 
 // UI Related Variables
 GuitarPedalUI guitarPedalUI;
@@ -605,6 +607,11 @@ int main(void) {
             tunerModuleIndex = i;
         }
     }
+
+    // Build once from the initialized hardware and active effect registry.
+    // v0.1 does not expose transport and grants no physical-operation authority.
+    deviceCapabilityDescriptor = synth_harness::BuildSourceDescriptor(
+        hardware, SETTINGS_ABSOLUTE_MAX_PARAM_COUNT, GetCurrentEffectsLayoutHash());
 
     // Initalize Persistance Storage
     InitPersistantStorage();

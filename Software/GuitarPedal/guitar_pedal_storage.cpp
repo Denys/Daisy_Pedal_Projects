@@ -18,7 +18,7 @@ static inline uint32_t HashLayoutValue(uint32_t hash, uint32_t value) {
     return (hash ^ value) * FNV_prime;
 }
 
-static uint32_t ComputeCurrentEffectsLayoutHash() {
+uint32_t GetCurrentEffectsLayoutHash() {
     // Build a compact fingerprint of the *current* effect layout.
     // If effect list/order/param types change, this hash changes too.
     uint32_t hash = offset_basis;
@@ -56,7 +56,7 @@ uint32_t GetDefaultTotalIdxOfGlobalSettingsBlock() {
 void InitPersistantStorage() {
     Settings defaultSettings;
     defaultSettings.fileFormatVersion = SETTINGS_FILE_FORMAT_VERSION;
-    defaultSettings.globalEffectsLayoutHash = ComputeCurrentEffectsLayoutHash();
+    defaultSettings.globalEffectsLayoutHash = GetCurrentEffectsLayoutHash();
     defaultSettings.globalActiveEffectID = 0;
     defaultSettings.globalMidiEnabled = true;
     defaultSettings.globalMidiChannel = 1;

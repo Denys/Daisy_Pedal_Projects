@@ -24,3 +24,22 @@ This append-preserving lane state supplements root `state.md`. Root state remain
 - **Acceptance status:** `PASS_WITH_GAPS` — documentation contract accepted; implementation and hardware validation remain `NOT_RUN`.
 - **Next single action:** implement shared per-target constants, the immutable descriptor, and host tests for all five explicit targets plus the no-macro 125B default; keep all transport exposure disabled.
 - **Impact:** HW — none; FW/DSP — future read-only descriptor and tests, no audio-path change; Mechanical — none; UI/service — future capability gating and accurate carrier labelling; BOM — no change; Documentation — contract, ADR, and lane continuity created.
+
+## 2026-08-17 — Harness Lite control inventory source integration
+
+- **Run ID:** `harness-lite-control-inventory-20260817`.
+- **Primary lane:** `synth-harness`.
+- **Objective:** apply the 2026-08-17 cumulative descriptor/control-inventory handoff to an isolated source branch and verify host plus ARM integration without adding transport or MIDI authority.
+- **Repository/workspace:** `Denys/Daisy_Pedal_Projects`, branch `agent/harness-lite-control-inventory`; no merge performed.
+- **Base SHA:** `bdb53ce13e83736b6909618adbfda3e237623649`, equal to current `main` and the handoff's declared source base.
+- **Active decisions:** ADR-0001 through ADR-0005; no supersession and no new product decision.
+- **Artifacts:** cumulative handoff `Denys/custom-pedals@d6acb747ec13d9fc6de113b3e4639a87f395a466`, patch blob `0ccea9cada5e5af12de2bc0c2da29033ddc393ed`; 14 implementation/test files applied, plus this lane state and root state.
+- **Patch drift:** original `git apply --check` failed only on three trailing-blank-line deletion hunks because the exact base files already ended at the preceding content line. The repaired application removed those three cosmetic EOF hunks; all semantic hunks and resulting source content were preserved.
+- **Host validation:** strict C++20 descriptor `458 checks PASS`; inventory `363 checks PASS`; both UBSan suites `PASS`; no-macro plus five explicit selection probes `PASS`; conflicting target macros rejected as expected.
+- **ARM validation:** xPack GNU Arm Embedded GCC `10.3.1 20210824`; pinned submodules initialized; libDaisy, DaisySP and CloudSeed built; no-macro default, `125B`, `1590B`, `1590B_SMD`, `TERRARIUM` and `FUNBOX` all compiled and linked `PASS`.
+- **Build failure and repair:** the first parallel default build produced one corrupt generated object, `build/base_hardware_module.o`, and failed at link. A serial rebuild produced a valid ARM ELF; default and all five explicit target builds then linked. This was a transient build-concurrency failure, not a source repair.
+- **Boundary verification:** Synth-Harness sources contain no transport/send/receive path; MIDI endpoints are inventory records only; `AuthorizesPhysicalOperation()` remains unconditional false. Existing application MIDI behavior is unchanged and is not authority granted by this patch.
+- **Hardware status:** `NOT_RUN`; no flash, boot, timing, electrical, audio, fixture, MIDI transaction or physical validation claim.
+- **Acceptance status:** `PASS_WITH_GAPS` — source, host and six ARM configurations pass on the dedicated unmerged branch; hardware and transport remain `HOLD`.
+- **Next single action:** review the dedicated branch diff and open a PR if integration review is desired; do not merge until that review is accepted.
+- **Impact:** HW — none; FW — descriptor and bounded inventory compiled into all targets; DSP/audio callback — no algorithmic change; Mechanical/BOM — none; Documentation — state advanced with explicit patch drift and build evidence.

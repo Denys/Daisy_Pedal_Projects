@@ -1,6 +1,6 @@
 # Project state — Delay, Multi-FX, and Synth Harness
 
-Last updated: 2026-07-29
+Last updated: 2026-08-17
 Status: active continuity index; Synth Harness lane state is materialized and must be maintained.
 
 ## Purpose
@@ -84,7 +84,7 @@ run:
 
 ## Decision log summary
 
-ADR-0001 through ADR-0005 are active and have no superseding records. ADR-0005 accepts the Synth Harness `DeviceCapabilityDescriptor` v0.1 as a documentation contract only; implementation and hardware validation remain `NOT_RUN`.
+ADR-0001 through ADR-0005 are active and have no superseding records. ADR-0005 remains the accepted documentation contract. Its descriptor/control-inventory implementation now passes host and six ARM configurations on dedicated unmerged branch `agent/harness-lite-control-inventory`; transport and hardware validation remain `NOT_RUN`.
 
 ## Run history
 
@@ -139,3 +139,20 @@ ADR-0001 through ADR-0005 are active and have no superseding records. ADR-0005 a
 - **Next single action:** implement shared per-target constants, the immutable descriptor, and host tests for five explicit targets plus the no-macro 125B default; keep transport exposure disabled.
 - **Impact:** HW — none; FW/DSP — future read-only descriptor/tests, no audio-path change; Mechanical — none; UI/service — future capability gating and accurate labelling; BOM/cost — no change, implementation estimate 1–2 days and unverified; Documentation — accepted contract, ADR, lane state, and root continuity update.
 - **Acceptance status:** `PASS_WITH_GAPS` — documentation contract accepted; implementation and physical validation remain `NOT_RUN`.
+
+### 2026-08-17 — Synth Harness source integration and six-target ARM verification
+
+- **Run ID:** `harness-lite-control-inventory-20260817`.
+- **Primary lane/objective:** `synth-harness`; integrate the cumulative Harness Lite descriptor/control inventory on a dedicated branch and verify host plus all six ARM target configurations.
+- **Repository/base:** `Denys/Daisy_Pedal_Projects`, branch `agent/harness-lite-control-inventory`, base/current-main `bdb53ce13e83736b6909618adbfda3e237623649`; no merge.
+- **State before:** the cumulative patch existed only in `Denys/custom-pedals`; source application, ARM integration and branch application were `NOT_RUN`.
+- **Active ADRs:** ADR-0001 through ADR-0005; no new or superseding decision.
+- **Changes:** applied the 14-file cumulative implementation/test package; the descriptor is built once from initialized carrier facts and current storage-layout hash; a fixed-capacity inventory enumerates supported endpoints without a transport.
+- **Drift/repair:** the originating SHA matched exactly, but the published patch contained three inapplicable cosmetic EOF blank-line deletion hunks. Those hunks alone were removed; semantic content was unchanged. Initial parallel ARM link failed because one generated pre-existing-source object was corrupt; serial regeneration repaired the build artifact without source changes.
+- **Validation:** descriptor strict/UBSan `458 PASS`; inventory strict/UBSan `363 PASS`; target-selection probes and conflict rejection `PASS`; pinned dependency builds `PASS`; ARM compile/link `PASS` for default, `125B`, `1590B`, `1590B_SMD`, `TERRARIUM`, and `FUNBOX` using GCC 10.3.1.
+- **Boundary:** no Synth-Harness transport or MIDI transaction path added; endpoint records grant no MIDI authority; physical authorization remains unconditional false. Existing application MIDI code is unchanged.
+- **Hardware/physical status:** `NOT_RUN`; no hardware validation claimed.
+- **Risks/gaps:** transport framing/authentication, real client, flash/boot, target timing, MIDI transactions, electrical/audio/fixture evidence remain `HOLD`; build should remain serial or add a clean reproducibility check if parallel corruption recurs.
+- **Acceptance status:** `PASS_WITH_GAPS`.
+- **Next single action:** review the dedicated branch diff and open a PR if desired; keep it unmerged until review acceptance.
+- **Impact:** Delay and Multi-FX unchanged; Synth Harness gains source/host/ARM evidence only; no HW, mechanical or BOM claim.
