@@ -100,8 +100,49 @@ enum class ParseStatus {
 };
 
 struct ParseResult {
-    ParseStatus status;
+    struct StatusField {
+        ParseStatus value;
+        Descriptor* descriptor;
+
+        StatusField& operator=(ParseStatus next) noexcept {
+            value = next;
+            if (next != ParseStatus::Ok && descriptor != nullptr)
+                descriptor->target = static_cast<TargetId>(0);
+            return *this;
+        }
+
+        constexpr operator ParseStatus() const noexcept { return value; }
+
+        friend constexpr bool operator==(const StatusField& lhs, ParseStatus rhs) noexcept {
+            return lhs.value == rhs;
+        }
+        friend constexpr bool operator!=(const StatusField& lhs, ParseStatus rhs) noexcept {
+            return lhs.value != rhs;
+        }
+    };
+
     Descriptor descriptor{};
+    StatusField status{ParseStatus::BadHeader, &descriptor};
+
+    ParseResult(ParseStatus initial, Descriptor parsed = {}) noexcept
+        : descriptor(parsed), status{initial, &descriptor} {
+        if (initial != ParseStatus::Ok)
+            descriptor.target = static_cast<TargetId>(0);
+    }
+
+    ParseResult(const ParseResult& other) noexcept
+        : descriptor(other.descriptor), status{other.status.value, &descriptor} {}
+
+    ParseResult& operator=(const ParseResult& other) noexcept {
+        if (this == &other) return *this;
+        descriptor = other.descriptor;
+        status.value = other.status.value;
+        status.descriptor = &descriptor;
+        return *this;
+    }
+
+    ParseResult(ParseResult&& other) noexcept : ParseResult(other) {}
+    ParseResult& operator=(ParseResult&& other) noexcept { return *this = other; }
 };
 
 constexpr std::size_t kCanonicalDescriptorBytes = 238;
