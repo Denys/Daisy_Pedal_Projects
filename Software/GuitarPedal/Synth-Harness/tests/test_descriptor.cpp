@@ -71,7 +71,6 @@ std::size_t FindTag(const std::vector<std::uint8_t>& bytes, std::uint16_t wanted
     return bytes.size();
 }
 
-
 std::vector<std::uint8_t> RemoveTag(std::vector<std::uint8_t> bytes, std::uint16_t wanted) {
     const auto start = FindTag(bytes, wanted);
     const auto length = static_cast<std::size_t>(bytes[start + 4] | (bytes[start + 5] << 8));
@@ -182,6 +181,10 @@ int main() {
     Check(AuthorizesPresetMutation(layout_parsed.descriptor,2011535672u),"exact layout permits preset mutation");
     Check(!AuthorizesPresetMutation(layout_parsed.descriptor,723477096u),"mismatched layout refuses preset mutation");
     Check(!AuthorizesPresetMutation(Parse(canonical).descriptor,2011535672u),"unknown layout refuses preset mutation");
+    auto invalid_layout_descriptor=layout_parsed.descriptor;
+    invalid_layout_descriptor.compiled_for_carrier=TargetId::Funbox;
+    Check(!AuthorizesPresetMutation(invalid_layout_descriptor,2011535672u),
+          "invalid descriptor refuses preset mutation");
 
     FakeHardware observed{9,3,2,4,true,true,true,true,true};
     const auto observed_facts=ObserveCarrierFacts(observed,777);
