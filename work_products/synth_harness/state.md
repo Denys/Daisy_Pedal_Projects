@@ -43,3 +43,19 @@ This append-preserving lane state supplements root `state.md`. Root state remain
 - **Acceptance status:** `PASS_WITH_GAPS` — source, host and six ARM configurations pass on the dedicated unmerged branch; hardware and transport remain `HOLD`.
 - **Next single action:** review the dedicated branch diff and open a PR if integration review is desired; do not merge until that review is accepted.
 - **Impact:** HW — none; FW — descriptor and bounded inventory compiled into all targets; DSP/audio callback — no algorithmic change; Mechanical/BOM — none; Documentation — state advanced with explicit patch drift and build evidence.
+
+## 2026-08-21 — Fail-closed parser/authorization repair and PR gate
+
+- **Run ID:** `harness-fail-closed-pr2-20260821`.
+- **Primary lane:** `synth-harness`.
+- **Repository/workspace:** `Denys/Daisy_Pedal_Projects`, branch `agent/harness-lite-control-inventory`; PR `#2` is draft/open against `main`.
+- **Starting candidate:** `c75ac3c47671997db576ab002897c03da9c57517`; correction work initially advanced through `82095521969d7300ad62931a9c0828c1f4848df3` before review repair.
+- **Correctness repair:** `AuthorizesPresetMutation()` now requires `IsValidDescriptor()` before layout/capability authorization. Review then identified a second fail-closed path: a rejected wire parse could leave a structurally valid partially reconstructed descriptor if a caller ignored `ParseStatus`. `ParseResult` now invalidates descriptor target identity whenever status becomes non-`Ok`, including late failures after valid core TLVs.
+- **Regression coverage:** existing descriptor test includes the invalid target/carrier preset-mutation negative; new `test_rejected_wire_authorization.cpp` appends an unknown critical TLV after an otherwise valid descriptor and requires `UnknownCriticalTag`, invalid descriptor state, and refusal of preset mutation. The strict host `Makefile` now runs this regression.
+- **CI contract:** `.github/workflows/build.yml` now includes strict host descriptor/inventory/selection/conflict tests, descriptor and inventory UBSan, no-macro/default ARM build, plus explicit `125B`, `1590B`, `1590B_SMD`, `TERRARIUM`, and `FUNBOX` ARM builds.
+- **Recorded prior evidence:** the 2026-08-17 pre-fix candidate recorded descriptor `458 PASS`, inventory `363 PASS`, both UBSan suites, target-selection probes/conflict negative, and six ARM builds. These results are historical source-recorded evidence and are not relabelled as exact-head PR #2 CI.
+- **Exact-head execution status:** GitHub workflow queries for the earlier PR head exposed no workflow runs; the connector environment cannot run the repository locally. The repaired PR head must therefore pass its configured GitHub workflow or equivalent exact-head execution before merge. `PASS` is not claimed for the new parser regression yet.
+- **Review status:** Codex review on `82095521969d7300ad62931a9c0828c1f4848df3` found two P1 issues: rejected-parse authorization and stale root/lane state. Both are repaired in the current branch; a new exact-head review is required.
+- **Boundary:** `AuthorizesPhysicalOperation()` remains unconditional false. No transport, flash, calibration, fixture actuation, MIDI transaction, physical routing, timing, audio, or electrical authority is added.
+- **Acceptance status:** `CHANGES_APPLIED / CI_REVIEW_PENDING / HARDWARE_HOLD`.
+- **Next single action:** run/inspect exact-head CI, request a fresh review, repair any valid finding, and merge PR #2 only from the unchanged reviewed passing head.
