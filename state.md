@@ -1,7 +1,7 @@
 # Project state — Delay, Multi-FX, and Synth Harness
 
-Last updated: 2026-08-21
-Status: active continuity index; Synth Harness PR #2 fail-closed repair is applied, exact-head CI/review pending; physical authority remains disabled.
+Last updated: 2026-08-22
+Status: active continuity index; Synth Harness PR #2 P2 StatusField copy-lifetime repair is applied, exact-head CI/review pending; physical authority remains disabled.
 
 ## Purpose
 
@@ -84,7 +84,7 @@ run:
 
 ## Decision log summary
 
-ADR-0001 through ADR-0005 are active and have no superseding records. ADR-0005 remains the accepted documentation contract. Its descriptor/control-inventory implementation has historical host and six-ARM evidence on dedicated branch `agent/harness-lite-control-inventory`; PR #2 now carries a fail-closed authorization/parser repair and reproducible CI matrix. Exact-head PR #2 CI/re-review are pending; transport and hardware validation remain `NOT_RUN / HOLD`.
+ADR-0001 through ADR-0005 are active and have no superseding records. ADR-0005 remains the accepted documentation contract. Its descriptor/control-inventory implementation has historical host and six-ARM evidence on dedicated branch `agent/harness-lite-control-inventory`; PR #2 now carries the fail-closed authorization/parser repairs, the P2 StatusField copy-lifetime correction, and the reproducible CI matrix. Exact-head PR #2 CI/re-review are pending; transport and hardware validation remain `NOT_RUN / HOLD`.
 
 ## Run history
 
@@ -168,3 +168,15 @@ ADR-0001 through ADR-0005 are active and have no superseding records. ADR-0005 r
 - **Physical-operation boundary:** `AuthorizesPhysicalOperation()` remains unconditional false; no transport, flash, calibration, fixture, MIDI transaction, physical routing, timing, electrical, or audio evidence is added.
 - **Acceptance status:** `PASS_WITH_GAPS / SOURCE_REPAIR_APPLIED / EXACT_HEAD_CI_REVIEW_PENDING / PHYSICAL_HOLD`.
 - **Next single action:** inspect exact repaired-head GitHub workflow and fresh review; repair valid findings; merge only if the reviewed head remains unchanged and the required source/build gate passes or is explicitly dispositioned by repository policy.
+
+### 2026-08-22 — Synth Harness PR #2 StatusField copy-lifetime repair
+
+- **Run ID:** `harness-pr2-statusfield-copy-20260822`.
+- **Primary lane/objective:** `synth-harness`; repair only the fresh P2 concerning copied `StatusField` ownership at exact starting head `d949e0145b678052c17ba905b6a05fec1cd69a56`.
+- **Finding:** `VERIFIED` — implicit `StatusField` copies retained an owner `Descriptor*`; reassignment of a saved copy could invalidate the wrong live `ParseResult`, while a copy extracted from a temporary could retain a pointer to destroyed storage.
+- **Source/test repair:** commit `15870d5d7bc9fe1e4c262ac0f12f8b869d2453e4` adds explicit detached `StatusField` copy construction and value-only copy assignment, and extends `Software/GuitarPedal/Synth-Harness/tests/test_rejected_wire_authorization.cpp` with live-result and temporary-result copy-lifetime regressions. Parser wire format and authorization policy are otherwise unchanged.
+- **Focused validation:** actual modified regression translation unit strict C++20 compile `PASS`; dedicated header-level status-copy runtime probe `PASS` with ASan+UBSan. Full host Makefile suite, target-selection matrix, ARM builds, and hardware checks were `NOT_RUN` locally. PR workflow query for source commit `15870d5d7bc9fe1e4c262ac0f12f8b869d2453e4` returned no pull-request workflow runs, so exact-head CI is `NOT_OBSERVED`.
+- **Decisions:** no new or superseding ADR; ADR-0005 remains active. No Delay or Multi-FX change.
+- **Boundary:** `AuthorizesPhysicalOperation()` remains unconditional false; no transport, flash, calibration, fixture, MIDI transaction, physical routing, timing, electrical, audio, mechanical, or BOM claim is added.
+- **Acceptance status:** `PASS_WITH_GAPS / P2_REPAIR_APPLIED / EXACT_HEAD_CI_REVIEW_PENDING / PHYSICAL_HOLD`.
+- **Next single action:** obtain a fresh review and exact-head CI on the final PR head; merge only from an unchanged reviewed passing head.
