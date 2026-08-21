@@ -316,6 +316,7 @@ bool AuthorizesPhysicalOperation(const Descriptor&) {
 }
 
 bool AuthorizesPresetMutation(const Descriptor& descriptor, std::uint32_t expected_layout_hash) {
+    if (!IsValidDescriptor(descriptor)) return false;
     const auto& presets = descriptor.capabilities[6];
     return presets.id == 7 && presets.scope == kCompiledApplicationScope &&
            presets.support == Support::Supported && presets.evidence == Evidence::ImplementedSource &&
