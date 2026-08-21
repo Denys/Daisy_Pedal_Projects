@@ -21,12 +21,37 @@ jobs:
         with:
           release: "10.3-2021.10"
 
+      - name: Run Synth Harness strict host contract
+        working-directory: Software/GuitarPedal/Synth-Harness/tests
+        run: |
+          make clean
+          make all
+
+      - name: Run Synth Harness UBSan contract
+        working-directory: Software/GuitarPedal/Synth-Harness/tests
+        run: |
+          g++ -std=c++20 -Wall -Wextra -Werror -pedantic -fsanitize=undefined -fno-sanitize-recover=all -I.. test_descriptor.cpp ../device_capability_descriptor.cpp -o descriptor_tests_ubsan
+          ./descriptor_tests_ubsan
+          g++ -std=c++20 -Wall -Wextra -Werror -pedantic -fsanitize=undefined -fno-sanitize-recover=all -I.. test_control_inventory.cpp ../control_inventory.cpp ../device_capability_descriptor.cpp -o control_inventory_tests_ubsan
+          ./control_inventory_tests_ubsan
+
       - name: Build Libraries
         working-directory: Software/GuitarPedal/
         run: ./ci/build_libs.sh
 
       - name: Prepare dist folder
         run: mkdir -p dist
+
+      - name: Build GuitarPedal firmware default/no-macro
+        working-directory: Software/GuitarPedal/
+        run: ./ci/build_app.sh
+      - name: Save default .bin
+        run: cp Software/GuitarPedal/build/guitarpedal.bin dist/default.bin
+      - name: Archive default artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: Default-Firmware
+          path: dist/default.bin
 
       - name: Build GuitarPedal firmware 125B
         working-directory: Software/GuitarPedal/
@@ -82,7 +107,6 @@ jobs:
         with:
           name: Funbox-Firmware
           path: dist/Funbox.bin
-
 
       # TODO: This would require a personal access token with repo scope to work
       # correctly with manually created releases in the Github UI
