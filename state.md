@@ -1,7 +1,7 @@
 # Project state — Delay, Multi-FX, and Synth Harness
 
-Last updated: 2026-08-17
-Status: active continuity index; Synth Harness lane state is materialized and must be maintained.
+Last updated: 2026-08-21
+Status: active continuity index; Synth Harness PR #2 fail-closed repair is applied, exact-head CI/review pending; physical authority remains disabled.
 
 ## Purpose
 
@@ -70,7 +70,7 @@ run:
 | Shared platform | Repository files plus latest united engineering report and active instructions | `state.md` until a more-specific file exists | Common interfaces, reusable DSP/HAL/UI/test assets, platform decisions |
 | Delay pedal | Latest delay architecture report, delay handoff context, delay AGENTS instructions | create `work_products/delay/state.md` or equivalent when that lane is materialized | Delay-centric; compact validation path plus full-featured pedal |
 | Multi-FX pedal | Latest multi-FX report and multi-FX AGENTS instructions | create `work_products/multi_fx/state.md` or equivalent when that lane is materialized | Separate companion product; fixed-slot graph, not arbitrary everything-pedal |
-| Synth Harness | ADR-0005, current repository evidence, and accepted descriptor contract | `work_products/synth_harness/state.md` | Users, developers, repairers, small manufacturers; broader than production test |
+| Synth Harness | ADR-0005, current repository evidence, accepted descriptor contract, and PR #2 candidate | `work_products/synth_harness/state.md` | Fail-closed source candidate; physical authority remains disabled |
 | Verification/productization | Test plans, evidence logs, BOM/cost/manufacturing artifacts | create lane-local state when artifacts exist | Hardware tests, firmware profiling, fixtures, service, DFM, commercialization |
 
 ## Current cross-lane invariants
@@ -84,7 +84,7 @@ run:
 
 ## Decision log summary
 
-ADR-0001 through ADR-0005 are active and have no superseding records. ADR-0005 remains the accepted documentation contract. Its descriptor/control-inventory implementation now passes host and six ARM configurations on dedicated unmerged branch `agent/harness-lite-control-inventory`; transport and hardware validation remain `NOT_RUN`.
+ADR-0001 through ADR-0005 are active and have no superseding records. ADR-0005 remains the accepted documentation contract. Its descriptor/control-inventory implementation has historical host and six-ARM evidence on dedicated branch `agent/harness-lite-control-inventory`; PR #2 now carries a fail-closed authorization/parser repair and reproducible CI matrix. Exact-head PR #2 CI/re-review are pending; transport and hardware validation remain `NOT_RUN / HOLD`.
 
 ## Run history
 
@@ -156,3 +156,15 @@ ADR-0001 through ADR-0005 are active and have no superseding records. ADR-0005 r
 - **Acceptance status:** `PASS_WITH_GAPS`.
 - **Next single action:** review the dedicated branch diff and open a PR if desired; keep it unmerged until review acceptance.
 - **Impact:** Delay and Multi-FX unchanged; Synth Harness gains source/host/ARM evidence only; no HW, mechanical or BOM claim.
+
+### 2026-08-21 — Synth Harness PR #2 fail-closed review repair
+
+- **Run ID:** `harness-fail-closed-pr2-20260821`.
+- **Primary lane/objective:** `synth-harness`; close the known preset-mutation fail-closed defect and convert the previous local validation matrix into an exact-head PR gate.
+- **Repository/base:** `Denys/Daisy_Pedal_Projects`, branch `agent/harness-lite-control-inventory`, base `main` `bdb53ce13e83736b6909618adbfda3e237623649`; PR `#2` draft/open.
+- **Changes:** `AuthorizesPresetMutation()` validates the entire descriptor before authorization; rejected `Parse()` results now invalidate descriptor target identity on every non-`Ok` status, including late unknown-critical-tag failures; a dedicated rejected-wire authorization regression is part of the strict host Makefile; Build All includes strict host, UBSan, default/no-macro and all five explicit ARM variants.
+- **Review:** Codex review of PR head `82095521969d7300ad62931a9c0828c1f4848df3` found two P1 issues: rejected parse could retain an authorizable descriptor, and root/lane state lagged the new correction/CI gate. Both defects are repaired on the branch; exact repaired-head re-review is still required.
+- **Validation boundary:** 2026-08-17 results remain valid historical source-recorded evidence for the pre-fix candidate. Exact repaired-head host/UBSan/ARM workflow execution has not yet been observed through GitHub Actions and is not claimed PASS. Local execution is unavailable in the current connector runtime.
+- **Physical-operation boundary:** `AuthorizesPhysicalOperation()` remains unconditional false; no transport, flash, calibration, fixture, MIDI transaction, physical routing, timing, electrical, or audio evidence is added.
+- **Acceptance status:** `PASS_WITH_GAPS / SOURCE_REPAIR_APPLIED / EXACT_HEAD_CI_REVIEW_PENDING / PHYSICAL_HOLD`.
+- **Next single action:** inspect exact repaired-head GitHub workflow and fresh review; repair valid findings; merge only if the reviewed head remains unchanged and the required source/build gate passes or is explicitly dispositioned by repository policy.
