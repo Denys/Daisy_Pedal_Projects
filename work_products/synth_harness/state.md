@@ -59,3 +59,17 @@ This append-preserving lane state supplements root `state.md`. Root state remain
 - **Boundary:** `AuthorizesPhysicalOperation()` remains unconditional false. No transport, flash, calibration, fixture actuation, MIDI transaction, physical routing, timing, audio, or electrical authority is added.
 - **Acceptance status:** `CHANGES_APPLIED / CI_REVIEW_PENDING / HARDWARE_HOLD`.
 - **Next single action:** run/inspect exact-head CI, request a fresh review, repair any valid finding, and merge PR #2 only from the unchanged reviewed passing head.
+
+## 2026-08-22 — PR #2 StatusField copy-lifetime repair
+
+- **Run ID:** `harness-pr2-statusfield-copy-20260822`.
+- **Primary lane:** `synth-harness`.
+- **Starting PR head:** `d949e0145b678052c17ba905b6a05fec1cd69a56`.
+- **Review finding:** `VERIFIED` — the P2 on `device_capability_descriptor.hpp` is valid. `StatusField`'s implicit copy retained its owner `Descriptor*`, so copying `Parse(bytes).status` could later write through a dangling pointer, and copying from a live `ParseResult` could invalidate the wrong descriptor.
+- **Correction:** source commit `15870d5d7bc9fe1e4c262ac0f12f8b869d2453e4` adds explicit `StatusField` copy construction that preserves only the status value and detaches the descriptor pointer. Copy assignment copies the value through the existing status assignment path, preserving only the destination's own binding. Parser behavior, wire format, descriptor layout, transport authority, and physical-operation policy are unchanged.
+- **Regression coverage:** `test_rejected_wire_authorization.cpp` now checks copies taken from both a live `ParseResult` and a temporary parse result, requires copied status fields to be detached, and verifies reassignment cannot mutate the originating valid descriptor. The prior unknown-critical-TLV fail-closed regression remains intact.
+- **Focused validation:** modified regression translation unit strict C++20 compile `PASS` with `-Wall -Wextra -Werror -pedantic`; dedicated status-copy probe runtime `PASS` under ASan+UBSan. Full repository host suite, ARM matrix, and hardware validation were `NOT_RUN` locally. GitHub PR workflow query for source commit `15870d5d7bc9fe1e4c262ac0f12f8b869d2453e4` returned no pull-request workflow run, so exact-head CI remains `NOT_OBSERVED`.
+- **Decision impact:** no new ADR and no scope change; ADR-0005 remains active.
+- **Boundary:** no transport, flashing, calibration, fixture actuation, MIDI transaction, physical routing, timing, audio, electrical, mechanical, or BOM claim is added.
+- **Acceptance status:** `PASS_WITH_GAPS / P2_REPAIR_APPLIED / EXACT_HEAD_CI_REVIEW_PENDING / PHYSICAL_HOLD`.
+- **Next single action:** obtain fresh review and exact-head CI on the final PR head; merge only from an unchanged reviewed passing head.
