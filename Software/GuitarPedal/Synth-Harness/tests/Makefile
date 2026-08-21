@@ -2,15 +2,19 @@ CXX ?= g++
 CXXFLAGS := -std=c++20 -Wall -Wextra -Werror -pedantic
 ROOT := ..
 
-.PHONY: all test probes clean
+.PHONY: all test inventory probes clean
 
 all: test inventory probes
 
 descriptor_tests: test_descriptor.cpp $(ROOT)/device_capability_descriptor.cpp
 	$(CXX) $(CXXFLAGS) -I$(ROOT) $^ -o $@
 
-test: descriptor_tests
+rejected_wire_authorization_test: test_rejected_wire_authorization.cpp $(ROOT)/device_capability_descriptor.cpp
+	$(CXX) $(CXXFLAGS) -I$(ROOT) $^ -o $@
+
+test: descriptor_tests rejected_wire_authorization_test
 	./descriptor_tests
+	./rejected_wire_authorization_test
 
 control_inventory_tests: test_control_inventory.cpp $(ROOT)/control_inventory.cpp $(ROOT)/device_capability_descriptor.cpp
 	$(CXX) $(CXXFLAGS) -I$(ROOT) $^ -o $@
@@ -38,4 +42,4 @@ probes:
 	fi
 
 clean:
-	rm -f descriptor_tests descriptor_tests_ubsan control_inventory_tests control_inventory_tests_ubsan probe_default probe_125b probe_1590b probe_1590b_smd probe_terrarium probe_funbox probe_conflict
+	rm -f descriptor_tests descriptor_tests_ubsan rejected_wire_authorization_test control_inventory_tests control_inventory_tests_ubsan probe_default probe_125b probe_1590b probe_1590b_smd probe_terrarium probe_funbox probe_conflict
