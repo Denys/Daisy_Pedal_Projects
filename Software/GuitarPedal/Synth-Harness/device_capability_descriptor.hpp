@@ -104,6 +104,16 @@ struct ParseResult {
         ParseStatus value;
         Descriptor* descriptor;
 
+        constexpr StatusField(ParseStatus initial, Descriptor* owner) noexcept
+            : value(initial), descriptor(owner) {}
+
+        StatusField(const StatusField& other) noexcept
+            : value(other.value), descriptor(nullptr) {}
+
+        StatusField& operator=(const StatusField& other) noexcept {
+            return *this = other.value;
+        }
+
         StatusField& operator=(ParseStatus next) noexcept {
             value = next;
             if (next != ParseStatus::Ok && descriptor != nullptr)

@@ -18,6 +18,37 @@ int main() {
         return 1;
     }
 
+    // A copied StatusField is a detached value snapshot. It must not retain the
+    // ParseResult descriptor pointer or mutate the ParseResult when reassigned.
+    auto valid_parse = Parse(canonical);
+    if (valid_parse.status != ParseStatus::Ok || !IsValidDescriptor(valid_parse.descriptor)) {
+        std::cerr << "FAIL: valid parse baseline\n";
+        return 1;
+    }
+    auto saved_status = valid_parse.status;
+    if (saved_status.descriptor != nullptr) {
+        std::cerr << "FAIL: copied status retained ParseResult descriptor pointer\n";
+        return 1;
+    }
+    saved_status = ParseStatus::BadEnum;
+    if (valid_parse.status != ParseStatus::Ok || !IsValidDescriptor(valid_parse.descriptor)) {
+        std::cerr << "FAIL: detached status copy mutated source ParseResult\n";
+        return 1;
+    }
+
+    // Extracting status from a temporary ParseResult must likewise leave no
+    // pointer that can dangle after the temporary is destroyed.
+    auto temporary_status = Parse(canonical).status;
+    if (temporary_status.descriptor != nullptr) {
+        std::cerr << "FAIL: temporary status copy retained dangling descriptor pointer\n";
+        return 1;
+    }
+    temporary_status = ParseStatus::BadEnum;
+    if (temporary_status != ParseStatus::BadEnum) {
+        std::cerr << "FAIL: detached temporary status is not independently assignable\n";
+        return 1;
+    }
+
     // Append an unknown critical TLV after all valid core TLVs. The parser must
     // reject the wire input and invalidate the partially reconstructed descriptor.
     std::array<std::uint8_t, kCanonicalDescriptorBytes + 7> rejected_wire{};
@@ -49,6 +80,6 @@ int main() {
         return 1;
     }
 
-    std::cout << "PASS rejected-wire authorization stays fail-closed\n";
+    std::cout << "PASS rejected-wire authorization and status copies stay fail-closed\n";
     return 0;
 }
