@@ -46,6 +46,7 @@ These rules hide the existing local backlog from normal Git status after synchro
 - Submodule pin and cleanliness checks: `PASS` for DaisySP, libDaisy, q/infra, q/q, and gcem before the build.
 - Full local build matrix: `PASS` (exit code 0) for libDaisy, DaisySP, CloudSeed, and firmware variants `125B`, `TERRARIUM`, `1590B`, `1590B_SMD`, and `FUNBOX`. Existing compiler and linker warnings remain visible in the command output; they did not fail the build.
 - Ignore-rule representative-path checks: `PASS` for all four root-anchored rules via `git check-ignore -v --no-index`.
+- Pull-request validation: PR #3 re-fetched with exact head `f8c02726859136feb5de4419ab9ad35ebed4bcd1` and the three-file allowlist `PASS`. GitHub reported zero workflow runs and zero commit statuses. The older open PR #2 also reports zero runs/statuses, so `Build All` is `NOT_RUN`, not `PASS`.
 - Rendered HTML quality gate: `COULD_NOT_RUN` by design. The only local HTML is stale and held outside publication; no current visual-readiness claim is made.
 - Hardware measurements, flashing, and on-device validation: `NOT_RUN`.
 
@@ -54,8 +55,9 @@ These rules hide the existing local backlog from normal Git status after synchro
 - The Altium candidates remain `HOLD`; ignoring them is not a provenance or equivalence decision.
 - The stale HTML remains local and may contradict current continuity state if opened without its date and commit context.
 - Open pull request #2 is outside this maintenance scope and remains untouched.
+- Exact-head merge is `BLOCKED` because the applicable pull-request workflow was not created. Repository settings were not changed.
 - **Next single action for this maintenance lane:** perform a separately authorized hardware-provenance review before considering any of the 48 Altium candidates for tracking. The program engineering next action remains unchanged by this run.
 
 ## Acceptance
 
-`PASS_WITH_GAPS` pending pull-request checks, exact-head merge, and post-sync identity verification. No implementation, hardware, performance, or product-readiness claim is introduced.
+`BLOCKED` for exact-head merge and post-merge synchronization until GitHub creates and passes the applicable `Build All` run. The branch and PR are published; the primary local checkout is safely fast-forwarded to the pre-PR `origin/main` base. No implementation, hardware, performance, or product-readiness claim is introduced.
