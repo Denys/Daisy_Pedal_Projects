@@ -139,3 +139,20 @@ ADR-0001 through ADR-0005 are active and have no superseding records. ADR-0005 a
 - **Next single action:** implement shared per-target constants, the immutable descriptor, and host tests for five explicit targets plus the no-macro 125B default; keep transport exposure disabled.
 - **Impact:** HW — none; FW/DSP — future read-only descriptor/tests, no audio-path change; Mechanical — none; UI/service — future capability gating and accurate labelling; BOM/cost — no change, implementation estimate 1–2 days and unverified; Documentation — accepted contract, ADR, lane state, and root continuity update.
 - **Acceptance status:** `PASS_WITH_GAPS` — documentation contract accepted; implementation and physical validation remain `NOT_RUN`.
+
+### 2026-08-24 — local backlog download and publication hygiene
+
+- **Run ID:** `daisy-pedal-projects-local-backlog-sync-20260824`.
+- **Primary lane:** verification/productization.
+- **Objective:** synchronize the local checkout while preserving and classifying its 211 untracked entries, then publish only bounded ignore policy and durable audit evidence.
+- **Repository/workspace:** `Denys/Daisy_Pedal_Projects`; clean integration branch based on current `origin/main`.
+- **Base SHA/snapshot:** `bdb53ce13e83736b6909618adbfda3e237623649`; prior local `main` was `613eb4f5014ac0aff8aaeed22952d42a580d11f4`, eight commits behind.
+- **State before:** the primary checkout had no tracked or staged changes, 211 untracked entries, and a zero-byte stale `.git/index.lock` dated 2026-07-12. No Git transport process was active. The exact stale lock was removed without modifying source, worktree content, or history.
+- **Decisions:** no ADR was added or changed. Ignoring the local imports is not evidence that they are obsolete, equivalent to tracked KiCad sources, or safe to delete.
+- **Artifacts created or modified:** `.gitignore`; `work_products/automation_runs/daisy_pedal_projects_local_backlog_review_2026-08-24.md`; root `state.md`.
+- **Evidence and classification:** 134 import-history ZIPs, 13 generated previews, 14 import logs, one KiCad `.history` entry, 48 untracked Altium source candidates, and one stale local HTML report. All 211 remain locally preserved. The 48 Altium candidates are `HOLD` pending a separate provenance and correspondence review. The HTML is `UNVERIFIED` as current because it is pinned to the 2026-07-23 audit cut and prior commit `613eb4f`.
+- **Tests and verification:** `git fetch origin --prune` `PASS`; incoming engineering-tree identity under `Software/`, `Hardware/`, and `.github/workflows/build.yml` `PASS`; clean pinned submodules `PASS`; local build of libDaisy, DaisySP, CloudSeed, `125B`, `TERRARIUM`, `1590B`, `1590B_SMD`, and `FUNBOX` `PASS` with exit code 0; all four representative ignore-rule checks `PASS`. Pull-request CI, exact-head merge, and post-sync identity checks are recorded when completed. Hardware measurement, flashing, and rendered-HTML QA were `NOT_RUN`; the stale HTML remains outside publication and no visual-readiness claim is made.
+- **Risks/blockers:** the 48 Altium candidates remain unverified; the ignored stale HTML can contradict current state if used without its date and commit context. Existing pull request #2 is outside this maintenance run and remains untouched.
+- **Next single action:** perform a separately authorized hardware-provenance review before tracking any of the 48 Altium candidates. The program engineering next action is unchanged by this maintenance run.
+- **Impact:** HW/FW/DSP/mechanical — no source change; verification/productization — bounded local-backlog classification and reproducible build evidence; repository hygiene — exact-path ignore policy; open pull requests — no change.
+- **Acceptance status:** `PASS_WITH_GAPS` pending pull-request CI, exact-head merge, and post-sync identity verification.

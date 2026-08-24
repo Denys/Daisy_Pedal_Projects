@@ -4,3 +4,11 @@ Hardware/GuitarPedal1590b-SMD/pcb/DaisySeedPedal1590b-SMD-backups
 Hardware/GuitarPedal125b/pcb/DaisySeedPedal125b-backups
 Hardware/GuitarPedal125b/pcb/CustomSymbols.bak
 **/__pycache__/
+
+# Local EDA import workspaces and generated history. Preserve locally; do not publish.
+/Hardware/GuitarPedal125b/pcb/Imported Audio_Input_Buffer/
+/Hardware/GuitarPedal1590b-SMD/pcb/Imported DaisySeedPedal1590b-SMD/
+/Hardware/GuitarPedal1590b-SMD/pcb/.history/
+
+# Superseded local report pinned to the pre-sync 2026-07-23 repository snapshot.
+/daisy_pedal_projects_harness_suitability_report_2026-07-23 (1).html
