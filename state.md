@@ -84,7 +84,7 @@ run:
 
 ## Decision log summary
 
-ADR-0001 through ADR-0005 are active and have no superseding records. ADR-0005 accepts the Synth Harness `DeviceCapabilityDescriptor` v0.1 as a documentation contract only; implementation and hardware validation remain `NOT_RUN`.
+ADR-0001 through ADR-0006 are active and have no superseding records. ADR-0005 accepts the Synth Harness `DeviceCapabilityDescriptor` v0.1 as a documentation contract only; implementation and hardware validation remain `NOT_RUN`. ADR-0006 keeps the bounded local EDA/import backlog outside publication pending the required provenance and correspondence review.
 
 ## Run history
 
