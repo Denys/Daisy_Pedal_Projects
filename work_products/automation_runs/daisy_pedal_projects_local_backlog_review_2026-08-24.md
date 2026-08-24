@@ -38,6 +38,8 @@ The only local-backlog behavior change is four root-anchored `.gitignore` entrie
 
 These rules hide the existing local backlog from normal Git status after synchronization. They do not delete or modify it. The source repository, submodule revisions, dependencies, firmware, DSP, hardware, CAD authority, workflows, licenses, and open pull request #2 are unchanged by this run.
 
+ADR-0006 records this publication boundary as durable repository policy. It explicitly preserves the candidates and requires provenance, correspondence, licensing, and EDA-tool validation before any future promotion.
+
 ## Validation
 
 - Stale lock diagnosis: `.git/index.lock` was zero bytes, dated 2026-07-12, and no Git transport process was active. The exact stale lock was removed; no source file, worktree content, or history was removed.
@@ -46,7 +48,7 @@ These rules hide the existing local backlog from normal Git status after synchro
 - Submodule pin and cleanliness checks: `PASS` for DaisySP, libDaisy, q/infra, q/q, and gcem before the build.
 - Full local build matrix: `PASS` (exit code 0) for libDaisy, DaisySP, CloudSeed, and firmware variants `125B`, `TERRARIUM`, `1590B`, `1590B_SMD`, and `FUNBOX`. Existing compiler and linker warnings remain visible in the command output; they did not fail the build.
 - Ignore-rule representative-path checks: `PASS` for all four root-anchored rules via `git check-ignore -v --no-index`.
-- Pull-request validation: PR #3 re-fetched with exact head `f8c02726859136feb5de4419ab9ad35ebed4bcd1` and the three-file allowlist `PASS`. GitHub reported zero workflow runs and zero commit statuses. The older open PR #2 also reports zero runs/statuses, so `Build All` is `NOT_RUN`, not `PASS`.
+- Initial pull-request validation: PR #3 was re-fetched at head `f8c02726859136feb5de4419ab9ad35ebed4bcd1` with the then-current three-file allowlist `PASS`. The review required ADR and continuity-evidence corrections, which are included in the successor head. GitHub reported zero workflow runs and zero commit statuses. The older open PR #2 also reports zero runs/statuses, so `Build All` is `NOT_RUN`, not `PASS`.
 - Rendered HTML quality gate: `COULD_NOT_RUN` by design. The only local HTML is stale and held outside publication; no current visual-readiness claim is made.
 - Hardware measurements, flashing, and on-device validation: `NOT_RUN`.
 
